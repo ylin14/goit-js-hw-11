@@ -20,8 +20,12 @@ function createGalleryMarkup (articles) {
       </div>
     </div>`
   }).join('');
+  updateMarkup(galleryMarkup)
 
-  return refs.gallery.innerHTML = galleryMarkup;
 }
 
-export {createGalleryMarkup};
+function updateMarkup(markup) {
+  refs.gallery.insertAdjacentHTML('beforeend', markup);
+}
+
+export {createGalleryMarkup, updateMarkup};

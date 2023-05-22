@@ -1,42 +1,57 @@
-import { fetchImages } from './partials/js/fetchImages';
+import { fetchImages, perPage } from './partials/js/fetchImages';
 import { refs } from './partials/js/refs';
 import {Notify} from 'notiflix';
 import { createGalleryMarkup } from './partials/js/markup';
 
-refs.form.addEventListener('submit', onSubmit);
+let pageNumber = 1;
+let input = "";
 
+refs.form.addEventListener('submit', onSubmit);
+refs.loadMoreBtn.addEventListener('click', onLoadMoreClick)
 
 function onSubmit(event) {
   event.preventDefault();
+  refs.gallery.innerHTML = '';
+  input = refs.form.elements.searchQuery.value.trim();
 
-  const input = refs.form.elements.searchQuery.value.trim();
-
-  fetchImages(input).then(img => {
+  fetchImages(input, pageNumber)
+    .then(img => {
     if (img.data.total === 0) {
-      Notify.failure('ніч нема');
+      refs.loadMoreBtn.style.display = "none";
+      Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+    } else {
+      createGalleryMarkup(img);
     }
-
-    return createGalleryMarkup(img);
+    if (img.data.total > perPage) {
+      pageNumber = 2;
+      refs.loadMoreBtn.style.display = "block";
+    }
   })
+    .catch(error => {
+    Notify.failure("Sorry, there are no images matching your search query. Please try again.");
+    console.log(error);
+  });
 }
 
-function notifyIfError(images) {
-  if (countriesArr.length >= 10) {
+function onLoadMoreClick(event) {
+  input = refs.form.elements.searchQuery.value.trim();
 
-    Notify.failure('Забагато країночок знайдено');
-
-  } else if (countriesArr.length > 1 && countriesArr.length < 10) {
-
-    Notify.info('Слухай, це - майже те, що треба!');
-
-    return createListMarkup(countriesArr);
-
-  } else if (countriesArr.length === 1) {
-
-    Notify.success('Ну кайфи ж, братанчик!');
-    return createCardMarkup(countriesArr);
-  }
+  fetchImages(input, pageNumber)
+    .then(img => {
+      console.log(pageNumber);
+      const numberOfPage = Math.ceil(img.data.total / perPage);
+      if (numberOfPage > pageNumber) {
+        pageNumber += 1;
+      } else if (numberOfPage >= pageNumber) {
+        pageNumber = 1;
+        Notify.failure("We're sorry, but you've reached the end of search results.");
+        refs.loadMoreBtn.style.display = "none";
+      }
+      createGalleryMarkup(img);
+    })
+    .catch(console.log);
 }
+
 
 
 
