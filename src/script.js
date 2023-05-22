@@ -28,7 +28,6 @@ function onSubmit(event) {
     }
   })
     .catch(error => {
-    Notify.failure("Sorry, there are no images matching your search query. Please try again.");
     console.log(error);
   });
 }
