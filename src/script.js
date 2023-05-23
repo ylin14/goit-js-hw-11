@@ -13,7 +13,7 @@ function onSubmit(event) {
   event.preventDefault();
   refs.gallery.innerHTML = '';
   input = refs.form.elements.searchQuery.value.trim();
-
+  console.log(input);
   if (input === "") {
     return
   }
