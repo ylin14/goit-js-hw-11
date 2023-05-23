@@ -14,6 +14,10 @@ function onSubmit(event) {
   refs.gallery.innerHTML = '';
   input = refs.form.elements.searchQuery.value.trim();
 
+  if (input === "") {
+    return
+  }
+
   fetchImages(input, pageNumber)
     .then(img => {
     if (img.data.total === 0) {
