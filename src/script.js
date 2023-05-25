@@ -13,20 +13,21 @@ function onSubmit(event) {
   event.preventDefault();
   refs.gallery.innerHTML = '';
   input = refs.form.elements.searchQuery.value.trim();
-  console.log(input);
-  if (input === "") {
+  refs.loadMoreBtn.style.display = "none";
+  if (!input) {
     return
   }
 
+  pageNumber = 1;
+
   fetchImages(input, pageNumber)
     .then(img => {
-    if (img.data.total === 0) {
-      refs.loadMoreBtn.style.display = "none";
+     if (img.data.total === 0) {
       Notify.failure("Sorry, there are no images matching your search query. Please try again.");
     } else {
       createGalleryMarkup(img);
     }
-    if (img.data.total > perPage) {
+     if (img.data.total > perPage) {
       pageNumber = 2;
       refs.loadMoreBtn.style.display = "block";
     }
@@ -37,6 +38,7 @@ function onSubmit(event) {
 }
 
 function onLoadMoreClick(event) {
+
   input = refs.form.elements.searchQuery.value.trim();
 
   fetchImages(input, pageNumber)
