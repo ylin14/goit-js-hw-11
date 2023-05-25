@@ -9,4 +9,5 @@ async function fetchImages(name, pageNumber) {
   }
 }
 
+
 export {fetchImages, perPage}
